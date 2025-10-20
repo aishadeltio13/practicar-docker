@@ -1,0 +1,21 @@
+services:
+  app:
+    image: python:3.14-slim         # Imagen oficial de Python, ya descargada localmente
+    container_name: python_app       # Nombre del contenedor
+    working_dir: /app                # Directorio de trabajo dentro del contenedor
+    volumes:
+      - .:/app                       # Monta el directorio actual dentro del contenedor
+    stdin_open: true                  # Permite interacción con input() en la terminal
+    tty: true                         # Asocia una terminal al contenedor
+    environment:                      # Variables de entorno configurables
+      - USER_NAME=Aisha               # Ejemplo: nombre de usuario
+      - ARRAY_MAX=200                 # Valor máximo de los números aleatorios
+    command: >
+      sh -c "pip install --no-cache-dir -r requirements.txt && python main_PR7.py"                      
+    restart: "no"                     # No reinicia el contenedor automáticamente
+
+# ENVIROMENT: utilizar formato lista cuando tenemos pocas variables de entorno, si tenemos muchas usar diccionarios.
+
+# PASOS:
+# docker compose run app
+

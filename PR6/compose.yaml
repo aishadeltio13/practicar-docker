@@ -1,0 +1,18 @@
+services:
+  app:
+    image: python:3.14-slim       # Imagen oficial de Python
+    container_name: primera_letra_interactiva
+    working_dir: /app             # Directorio de trabajo dentro del contenedor
+    volumes:
+      - .:/app                    # Monta tu código local dentro del contenedor
+    command: python main_PR6.py       # Comando a ejecutar
+    stdin_open: true              # Permite entrada interactiva
+    tty: true                     # Asocia una terminal para la interacción
+
+
+# PASOS:
+# NO USAR: docker compose up --> esto solo levanta el contenedor, no lo hace interactivo
+# docker compose run app --> hace el contenedor interactivo (tenemos inputs)
+# Si ya hemos creado el contenedor, para hacerlo interactivo: docker start -ai (nombre contenedor)
+
+

@@ -1,0 +1,34 @@
+services:
+  app:
+    image: python:3.14-slim
+    container_name: secure_user_app
+    working_dir: /app
+    volumes:
+      - .:/app        # Monta el proyecto local
+    stdin_open: true
+    tty: true
+    entrypoint: ["sh", "-c"]
+    command: >
+      USERS_FILE=/app/users.txt && \
+      read -p 'Usuario: ' USERNAME && \
+      read -s -p 'Contraseña: ' PASSWORD && echo && \
+      # Si no existe users.txt -> primera ejecución
+      if [ ! -f "$USERS_FILE" ]; then \
+          adduser --disabled-password --gecos '' --uid 0 $USERNAME && \
+          echo "$USERNAME:$PASSWORD" > "$USERS_FILE" && \
+          echo "✅ Primer usuario $USERNAME creado con permisos root"; \
+      else \
+          # Si usuario existe, validar contraseña
+          if grep -q "^$USERNAME:" "$USERS_FILE"; then \
+              grep "^$USERNAME:" "$USERS_FILE" | grep -q "$PASSWORD" && echo "✅ Bienvenido $USERNAME" || (echo "❌ Contraseña incorrecta" && exit 1); \
+          else \
+              # Nuevo usuario limitado
+              adduser --disabled-password --gecos '' $USERNAME && \
+              chmod -R 555 /app && \
+              echo "$USERNAME:$PASSWORD" >> "$USERS_FILE" && \
+              echo "✅ Usuario $USERNAME creado con permisos limitados"; \
+          fi; \
+      fi && \
+      su $USERNAME -c 'python main.py'
+    restart: "no"
+
